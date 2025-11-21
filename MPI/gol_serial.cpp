@@ -11,6 +11,8 @@
 #include <iterator>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <ctime>
+#include <mpi.h>
+#include <stdio.h>
 
 namespace ublas = boost::numeric::ublas;
 
@@ -108,7 +110,7 @@ int main(int argc, char *argv[])
     {
         std::cout << "This program should be called with four arguments! \nThese should be, the total number of rows; the total number of columns; the gap between saved iterations and the total number of iterations, in that order." << std::endl;
         return 1;
-    }
+    } 
     size_t rows, cols;
     int iteration_gap, iterations;
     try

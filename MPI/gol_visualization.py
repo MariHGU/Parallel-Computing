@@ -37,4 +37,4 @@ for iteration in range(0, iter_end+1, iter_step):
     plt.pcolor(board)
     plt.title("Iteration=" + str(iteration))
     plt.show(block=False)
-    plt.pause(0.5)
+    plt.pause(1.5)
