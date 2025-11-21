@@ -111,7 +111,6 @@ int main(int argc, char *argv[])
         std::cout << "This program should be called with four arguments! \nThese should be, the total number of rows; the total number of columns; the gap between saved iterations and the total number of iterations, in that order." << std::endl;
         return 1;
     } 
-    size_t rows, cols;
     int iteration_gap, iterations;
     try
     {
@@ -125,10 +124,16 @@ int main(int argc, char *argv[])
         std::cout << "One or more program arguments are invalid!" << std::endl;
         return 1;
     }
+    
     int processes = 1, processID = 0;
     size_t firstRow = 0, lastRow = rows - 1, firstCol = 0, lastCol = cols - 1;
     std::string programName = setUpProgram(rows, cols, iteration_gap, iterations, processes);
+    
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &processes);
+    MPI_Comm_rank(MPI_COMM_WORLD, &processID);
 
+    size_t rows, cols;
     //Build board
     ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1);
     initializeBoard(board);
