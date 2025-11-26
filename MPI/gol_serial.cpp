@@ -104,6 +104,20 @@ std::string setUpProgram(size_t rows, size_t cols, int iteration_gap, int iterat
     return programName;
 }
 
+void broadcastProgram(std::string &programName, int processID){
+    char buffer[globalBufferLength];
+
+    if (processID == 0){
+        // only process 0 should broadcast
+        // copies name into buffer
+        std::snprintf(buffer, globalBufferLength, "%s", programName.c_str());
+    }
+
+    MPI_Bcast(buffer, globalBufferLength, MPI_CHAR, 0, MPI_COMM_WORLD);
+
+    programName = std::string(buffer);
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 5)
@@ -112,6 +126,7 @@ int main(int argc, char *argv[])
         return 1;
     } 
     int iteration_gap, iterations;
+    size_t rows, cols;
     try
     {
         rows = atoi(argv[1]);
@@ -124,21 +139,33 @@ int main(int argc, char *argv[])
         std::cout << "One or more program arguments are invalid!" << std::endl;
         return 1;
     }
-    
-    int processes = 1, processID = 0;
+
+    int processes, processID;
     size_t firstRow = 0, lastRow = rows - 1, firstCol = 0, lastCol = cols - 1;
-    std::string programName = setUpProgram(rows, cols, iteration_gap, iterations, processes);
-    
+
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &processes);
     MPI_Comm_rank(MPI_COMM_WORLD, &processID);
+    
+    std::string programName;
+    if (processID == 0){
+        programName = setUpProgram(rows, cols, iteration_gap, iterations, processes);
+    }
+    
+    broadcastProgram(programName, processID);
 
-    size_t rows, cols;
     //Build board
+    int width = cols/processes;
     ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1);
+    ublas::matrix<bool> board1(width+2, cols);
+    
+    // board(str, str/num_process
     initializeBoard(board);
 
-    //Do iteration
+    // Initialize local boards
+
+    //Do iteration    initializeBoard(board);
+
     writeBoardToFile(board, firstRow, lastRow, firstCol, lastCol, programName, 0, processID);
     for (int i = 1; i <= iterations; ++i)
     {
