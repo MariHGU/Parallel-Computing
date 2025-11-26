@@ -58,9 +58,10 @@ void updateBoard(ublas::matrix<bool> &board)
     }
 
     //Update board
-    for (size_t i = 0; i < rows; ++i)
+    // Change to i = 1 and rows -1, cols-1
+    for (size_t i = 1; i < rows-1; ++i)
     {
-        for (size_t j = 0; j < cols; ++j)
+        for (size_t j = 1; j < cols-1; ++j)
         {
             board(i, j) = ((liveNeighbors(i, j) == 3) || (board(i, j) && liveNeighbors(i, j) == 2));
         }
@@ -127,7 +128,7 @@ int main(int argc, char *argv[])
     } 
     int iteration_gap, iterations;
     size_t rows, cols;
-    try
+    tryublas::matrix<bool> &board, size_t firstRow, size_t lastRow, size_t firstCol, size_t lastCol, std::string fileName, int iteration, unsigned int processID
     {
         rows = atoi(argv[1]);
         cols = atoi(argv[2]);
@@ -157,7 +158,7 @@ int main(int argc, char *argv[])
     //Build board
     int width = cols/processes;
     ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1);
-    ublas::matrix<bool> board1(width+2, cols);
+    //ublas::matrix<bool> board1(width+2, cols);
     
     // board(str, str/num_process
     initializeBoard(board);
