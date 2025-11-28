@@ -8,4 +8,4 @@
 #SBATCH --account=lp_edu_alg_parallel_comp
 
 module load OpenMPI GCC Boost.MPI intel
-mpirun -n $SLURM_NTASKS ./gol 100 100 2 6
+time mpirun -n $SLURM_NTASKS ./gol 100 100 2 6

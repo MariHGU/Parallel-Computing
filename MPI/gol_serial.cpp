@@ -25,7 +25,7 @@ void initializeBoard(ublas::matrix<bool> &board, int processID)
     // do random seed per process, to ensure difference
     unsigned int seed = time(0) * processID;
     srand(seed);
-    for (auto row = board.begin1()+1; row != board.end1(); ++row)
+    for (auto row = board.begin1()+1; row != board.end1()-1; ++row)
     {
         for (auto element = row.begin(); element != row.end(); ++element)
         {
@@ -36,12 +36,12 @@ void initializeBoard(ublas::matrix<bool> &board, int processID)
 
 void updateBoard(ublas::matrix<bool> &board)
 {
-    const size_t rows = board.size1();
+    const size_t totalRows = board.size1();
     const size_t cols = board.size2();
-    ublas::matrix<int> liveNeighbors(rows, cols, 0);
+    ublas::matrix<int> liveNeighbors(totalRows, cols, 0);
 
     //Count live neigbors
-    for (size_t i = 0; i < rows; ++i)
+    for (size_t i = 0; i < totalRows; ++i)
     {
         for (size_t j = 0; j < cols; ++j)
         {
@@ -51,8 +51,9 @@ void updateBoard(ublas::matrix<bool> &board)
                 {
                     for (int dj = -1; dj <= 1; ++dj)
                     {
+
                         //Periodic boundary conditions
-                        liveNeighbors((i + di + rows) % rows, (j + dj + cols) % cols)++;
+                        liveNeighbors((i + di + totalRows) % totalRows, (j + dj + cols) % cols)++;
                     }
                 }
                 liveNeighbors(i, j)--; //Correction so that a cell does not concider itself as a live neighbor
@@ -62,9 +63,9 @@ void updateBoard(ublas::matrix<bool> &board)
 
     //Update board
     // Change to i = 1 and rows -1, cols-1
-    for (size_t i = 1; i < rows-1; ++i)
+    for (size_t i = 1; i < totalRows-1; ++i)
     {
-        for (size_t j = 1; j < cols-1; ++j)
+        for (size_t j = 0; j < cols-1; ++j)
         {
             board(i, j) = ((liveNeighbors(i, j) == 3) || (board(i, j) && liveNeighbors(i, j) == 2));
         }
@@ -130,6 +131,26 @@ void broadcastProgram(std::string &programName, int processID){
     programName = std::string(buffer);
 }
 
+def exchangeGhostRows(ublas::matrix<bool> &board, int rows, int cols, int processID, int processes){
+    int up = (processID +1 - processes) % processes;
+    int down = (processID - 1) % processes;
+
+    // ublas is row-major -> row elements of row i are contiguous
+    bool* rowPointer = &board(i, 0)
+
+    MPI_Sendrecv(
+        &board(1,0), cols, MPI_CXX_BOOL, down, 0, // send first real row
+        &board(rows+1, 0), cols, MPI_CXX_BOOL, down, 0, // recieve bottom ghost row
+        MPI_COMM_WORLD, MPI_STATUS_IGNORE
+    );
+
+    MPI_Sendrecv(
+        &board(rows, 0), cols, MPI_CXX_BOOL, up, 1, // send bottom real row
+        &boards(0, 0), cols, MPI_CXX_BOOL, up, // recieve first ghost row
+        MPI_COMM_WORLD, MPI_STATUS_IGNORE
+    ); 
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 5)
@@ -180,6 +201,7 @@ int main(int argc, char *argv[])
     writeBoardToFile(board, firstRow, lastRow, firstCol, lastCol, programName, 0, processID);
     for (int i = 1; i <= iterations; ++i)
     {
+        exchangeGhostRows(board, row_width, cols, processID, processes);
         updateBoard(board);
         if (i % iteration_gap == 0)
         {
