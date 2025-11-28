@@ -85,7 +85,13 @@ void writeBoardToFile(ublas::matrix<bool> &board, size_t firstRow, size_t lastRo
     outputFile << std::to_string(firstRow) << " " << std::to_string(lastRow) << std::endl;
     outputFile << std::to_string(firstCol) << " " << std::to_string(lastCol) << std::endl;
     //Write data
-    std::ostream_iterator<bool> 
+    std::ostream_iterator<bool> output_iteratable(outputFile, "\t");
+    for (auto row = board.begin1(); row != board.end1(); ++row)
+    {
+        copy(row.begin(), row.end(), outputIterator);
+        outputFile << std::endl;
+    }
+    
     outputFile.close();
 }
 
