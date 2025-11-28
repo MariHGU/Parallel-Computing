@@ -57,8 +57,8 @@ void updateBoard(ublas::matrix<bool> &board)
                         nj = (nj + cols) % cols;
 
                         //Periodic boundary conditions
-                        if (ni >= 0 && nj < totalRows)
-                        liveNeighbors(ni, nj)++;
+                        if (ni >= 0 && ni < totalRows)
+                        liveNeighbors(ni,)++;
                     }
                 }
                 liveNeighbors(i, j)--; //Correction so that a cell does not concider itself as a live neighbor
@@ -136,12 +136,12 @@ void broadcastProgram(std::string &programName, int processID){
     programName = std::string(buffer);
 }
 
-def exchangeGhostRows(ublas::matrix<bool> &board, int rows, int cols, int processID, int processes){
-    int up = (processID +1 - processes) % processes;
-    int down = (processID - 1) % processes;
+void exchangeGhostRows(ublas::matrix<bool> &board, int rows, int cols, int processID, int processes){
+    int up = (processID -1 + processes) % processes;
+    int down = (processID + 1) % processes;
 
     // ublas is row-major -> row elements of row i are contiguous
-    bool* rowPointer = &board(i, 0)
+    bool* rowPointer = &board(i, 0);
 
     MPI_Sendrecv(
         &board(1,0), cols, MPI_CXX_BOOL, down, 0, // send first real row
@@ -195,12 +195,12 @@ int main(int argc, char *argv[])
     //Build board
     int row_width = rows/processes; // assuming divisability
     // ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1); global board
-    ublas::matrix<bool> board1(row_width+2, cols); // local board
+    ublas::matrix<bool> board(row_width+2, cols); // local board
     
     //initializeBoard(board);
 
     // Initialize local boards
-    initializeBoard(board1, processID);
+    initializeBoard(board, processID);
     //Do iteration    initializeBoard(board);
 
     writeBoardToFile(board, firstRow, lastRow, firstCol, lastCol, programName, 0, processID);
