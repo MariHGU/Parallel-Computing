@@ -51,9 +51,14 @@ void updateBoard(ublas::matrix<bool> &board)
                 {
                     for (int dj = -1; dj <= 1; ++dj)
                     {
+                        int ni = i + di;
+                        int nj = j + dj;
+
+                        nj = (nj + cols) % cols;
 
                         //Periodic boundary conditions
-                        liveNeighbors((i + di + totalRows) % totalRows, (j + dj + cols) % cols)++;
+                        if (ni >= 0 && nj < totalRows)
+                        liveNeighbors(ni, nj)++;
                     }
                 }
                 liveNeighbors(i, j)--; //Correction so that a cell does not concider itself as a live neighbor
@@ -65,7 +70,7 @@ void updateBoard(ublas::matrix<bool> &board)
     // Change to i = 1 and rows -1, cols-1
     for (size_t i = 1; i < totalRows-1; ++i)
     {
-        for (size_t j = 0; j < cols-1; ++j)
+        for (size_t j = 0; j < cols; ++j)
         {
             board(i, j) = ((liveNeighbors(i, j) == 3) || (board(i, j) && liveNeighbors(i, j) == 2));
         }
