@@ -57,8 +57,9 @@ void updateBoard(ublas::matrix<bool> &board)
                         nj = (nj + cols) % cols;
 
                         //Periodic boundary conditions
-                        if (ni >= 0 && ni < totalRows)
-                        liveNeighbors(ni,)++;
+                        if (ni >= 0 && ni < totalRows){
+                            liveNeighbors(ni,nj)++;
+                        }
                     }
                 }
                 liveNeighbors(i, j)--; //Correction so that a cell does not concider itself as a live neighbor
@@ -86,28 +87,16 @@ void writeBoardToFile(ublas::matrix<bool> &board, size_t firstRow, size_t lastRo
     outputFile << std::to_string(firstCol) << " " << std::to_string(lastCol) << std::endl;
     //Write data
     std::ostream_iterator<bool> output_iteratable(outputFile, "\t");
+    // maybe skip ghost lines?
     for (auto row = board.begin1(); row != board.end1(); ++row)
     {
-        copy(row.begin(), row.end(), outputIterator);
+        copy(row.begin(), row.end(), output_iteratable);
         outputFile << std::endl;
     }
     
     outputFile.close();
 }
 
-std::string setUpProgram(size_t rows, size_t cols, int iteration_gap, int iterations, int processes)
-{
-    //Generate progam name based on current time, all threads should use the same name!
-    time_t rawtime;
-    struct tm *timeInfo;outputIterator(outputFile, "\t");
-    for (auto row = board.begin1(); row != board.end1(); ++row)
-    {
-        copy(row.begin(), row.end(), outputIterator);
-        outputFile << std::endl;
-    }
-    //Close file
-    outputFile.close();
-}
 
 std::string setUpProgram(size_t rows, size_t cols, int iteration_gap, int iterations, int processes)
 {
@@ -147,7 +136,6 @@ void exchangeGhostRows(ublas::matrix<bool> &board, int rows, int cols, int proce
     int down = (processID + 1) % processes;
 
     // ublas is row-major -> row elements of row i are contiguous
-    bool* rowPointer = &board(i, 0);
 
     MPI_Sendrecv(
         &board(1,0), cols, MPI_CXX_BOOL, down, 0, // send first real row
@@ -171,7 +159,7 @@ int main(int argc, char *argv[])
     } 
     int iteration_gap, iterations;
     size_t rows, cols;
-    tryublas::matrix<bool> &board, size_t firstRow, size_t lastRow, size_t firstCol, size_t lastCol, std::string fileName, int iteration, unsigned int processID
+    try
     {
         rows = atoi(argv[1]);
         cols = atoi(argv[2]);
@@ -219,4 +207,5 @@ int main(int argc, char *argv[])
             writeBoardToFile(board, firstRow, lastRow, firstCol, lastCol, programName, i, processID);
         }
     }
+    MPI_Finalize();
 }
