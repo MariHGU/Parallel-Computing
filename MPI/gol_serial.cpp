@@ -18,11 +18,14 @@ namespace ublas = boost::numeric::ublas;
 
 int const globalBufferLength = 50;
 
-void initializeBoard(ublas::matrix<bool> &board)
+void initializeBoard(ublas::matrix<bool> &board, int processID)
 {
     int deadCellMultiplyer = 2;
-    srand(time(0));
-    for (auto row = board.begin1(); row != board.end1(); ++row)
+
+    // do random seed per process, to ensure difference
+    unsigned int seed = time(0) * processID;
+    srand(seed);
+    for (auto row = board.begin1()+1; row != board.end1(); ++row)
     {
         for (auto element = row.begin(); element != row.end(); ++element)
         {
@@ -164,14 +167,14 @@ int main(int argc, char *argv[])
     broadcastProgram(programName, processID);
 
     //Build board
-    int width = cols/processes;
+    int row_width = rows/processes; // assuming divisability
     // ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1); global board
-    ublas::matrix<bool> board1(width+2, cols); // local board
+    ublas::matrix<bool> board1(row_width+2, cols); // local board
     
     //initializeBoard(board);
 
     // Initialize local boards
-    initializeBoard(board1);
+    initializeBoard(board1, processID);
     //Do iteration    initializeBoard(board);
 
     writeBoardToFile(board, firstRow, lastRow, firstCol, lastCol, programName, 0, processID);
