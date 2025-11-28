@@ -76,7 +76,15 @@ void writeBoardToFile(ublas::matrix<bool> &board, size_t firstRow, size_t lastRo
     outputFile << std::to_string(firstRow) << " " << std::to_string(lastRow) << std::endl;
     outputFile << std::to_string(firstCol) << " " << std::to_string(lastCol) << std::endl;
     //Write data
-    std::ostream_iterator<bool> outputIterator(outputFile, "\t");
+    std::ostream_iterator<bool> 
+    outputFile.close();
+}
+
+std::string setUpProgram(size_t rows, size_t cols, int iteration_gap, int iterations, int processes)
+{
+    //Generate progam name based on current time, all threads should use the same name!
+    time_t rawtime;
+    struct tm *timeInfo;outputIterator(outputFile, "\t");
     for (auto row = board.begin1(); row != board.end1(); ++row)
     {
         copy(row.begin(), row.end(), outputIterator);
@@ -157,14 +165,13 @@ int main(int argc, char *argv[])
 
     //Build board
     int width = cols/processes;
-    ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1);
-    //ublas::matrix<bool> board1(width+2, cols);
+    // ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1); global board
+    ublas::matrix<bool> board1(width+2, cols); // local board
     
-    // board(str, str/num_process
-    initializeBoard(board);
+    //initializeBoard(board);
 
     // Initialize local boards
-
+    initializeBoard(board1);
     //Do iteration    initializeBoard(board);
 
     writeBoardToFile(board, firstRow, lastRow, firstCol, lastCol, programName, 0, processID);
