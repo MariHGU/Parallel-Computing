@@ -139,13 +139,13 @@ void exchangeGhostRows(ublas::matrix<bool> &board, int rows, int cols, int proce
 
     MPI_Sendrecv(
         &board(1,0), cols, MPI_CXX_BOOL, down, 0, // send first real row
-        &board(rows+1, 0), cols, MPI_CXX_BOOL, down, 0, // recieve bottom ghost row
+        &board(0, 0), cols, MPI_CXX_BOOL, up, 0, // recieve bottom ghost row
         MPI_COMM_WORLD, MPI_STATUS_IGNORE
     );
 
     MPI_Sendrecv(
         &board(rows, 0), cols, MPI_CXX_BOOL, up, 1, // send bottom real row
-        &board(0, 0), cols, MPI_CXX_BOOL, up, 1,// recieve first ghost row
+        &board(rows+1, 0), cols, MPI_CXX_BOOL, down, 1,// recieve first ghost row
         MPI_COMM_WORLD, MPI_STATUS_IGNORE
     ); 
 }
