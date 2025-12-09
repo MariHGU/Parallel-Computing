@@ -1,23 +1,16 @@
 mpic++ -o gol gol_serial.cpp -O3 -DNDEBUG -DBOOST_UBLAS_NDEBUG -std=c++1z gol_serial.cpp
-gol_serial.cpp: In function ‘int main(int, char**)’:
-gol_serial.cpp:204:27: error: cannot bind non-const lvalue reference of type ‘boost::numeric::ublas::matrix<unsigned char>&’ to an rvalue of type ‘boost::numeric::ublas::matrix<unsigned char>’
-  204 |         exchangeGhostRows(board, row_width, cols, processID, processes);
-      |                           ^~~~~
-In file included from gol_serial.cpp:12:
-/usr/include/boost/numeric/ublas/matrix.hpp:169:9: note:   after user-defined conversion: ‘boost::numeric::ublas::matrix<T, L, A>::matrix(const boost::numeric::ublas::matrix_expression<E1>&) [with AE = boost::numeric::ublas::matrix<bool>; T = unsigned char; L = boost::numeric::ublas::basic_row_major<>; A = boost::numeric::ublas::unbounded_array<unsigned char, std::allocator<unsigned char> >]’
-  169 |         matrix (const matrix_expression<AE> &ae):
-      |         ^~~~~~
-gol_serial.cpp:134:54: note:   initializing argument 1 of ‘void exchangeGhostRows(boost::numeric::ublas::matrix<unsigned char>&, int, int, int, int)’
-  134 | void exchangeGhostRows(ublas::matrix<unsigned char> &board, int rows, int cols, int processID, int processes){
-      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-gol_serial.cpp: In function ‘int main(int, char**)’:
-gol_serial.cpp:204:27: error: cannot bind non-const lvalue reference of type ‘boost::numeric::ublas::matrix<unsigned char>&’ to an rvalue of type ‘boost::numeric::ublas::matrix<unsigned char>’
-  204 |         exchangeGhostRows(board, row_width, cols, processID, processes);
-      |                           ^~~~~
-In file included from gol_serial.cpp:12:
-/usr/include/boost/numeric/ublas/matrix.hpp:169:9: note:   after user-defined conversion: ‘boost::numeric::ublas::matrix<T, L, A>::matrix(const boost::numeric::ublas::matrix_expression<E1>&) [with AE = boost::numeric::ublas::matrix<bool>; T = unsigned char; L = boost::numeric::ublas::basic_row_major<>; A = boost::numeric::ublas::unbounded_array<unsigned char, std::allocator<unsigned char> >]’
-  169 |         matrix (const matrix_expression<AE> &ae):
-      |         ^~~~~~
-gol_serial.cpp:134:54: note:   initializing argument 1 of ‘void exchangeGhostRows(boost::numeric::ublas::matrix<unsigned char>&, int, int, int, int)’
-  134 | void exchangeGhostRows(ublas::matrix<unsigned char> &board, int rows, int cols, int processID, int processes){
-      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/usr/bin/ld: /tmp/ccWEWN3g.o: in function `initializeBoard(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&, int)':
+gol_serial.cpp:(.text+0xb0): multiple definition of `initializeBoard(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&, int)'; /tmp/ccOYXEoD.o:gol_serial.cpp:(.text+0xb0): first defined here
+/usr/bin/ld: /tmp/ccWEWN3g.o: in function `updateBoard(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&)':
+gol_serial.cpp:(.text+0x180): multiple definition of `updateBoard(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&)'; /tmp/ccOYXEoD.o:gol_serial.cpp:(.text+0x180): first defined here
+/usr/bin/ld: /tmp/ccWEWN3g.o: in function `broadcastProgram(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, int)':
+gol_serial.cpp:(.text+0x640): multiple definition of `broadcastProgram(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, int)'; /tmp/ccOYXEoD.o:gol_serial.cpp:(.text+0x640): first defined here
+/usr/bin/ld: /tmp/ccWEWN3g.o: in function `exchangeGhostRows(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&, int, int, int, int)':
+gol_serial.cpp:(.text+0x9a0): multiple definition of `exchangeGhostRows(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&, int, int, int, int)'; /tmp/ccOYXEoD.o:gol_serial.cpp:(.text+0x9a0): first defined here
+/usr/bin/ld: /tmp/ccWEWN3g.o: in function `writeBoardToFile(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&, unsigned long, unsigned long, unsigned long, unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, unsigned int)':
+gol_serial.cpp:(.text+0xa50): multiple definition of `writeBoardToFile(boost::numeric::ublas::matrix<bool, boost::numeric::ublas::basic_row_major<unsigned long, long>, boost::numeric::ublas::unbounded_array<bool, std::allocator<bool> > >&, unsigned long, unsigned long, unsigned long, unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, unsigned int)'; /tmp/ccOYXEoD.o:gol_serial.cpp:(.text+0xa50): first defined here
+/usr/bin/ld: /tmp/ccWEWN3g.o: in function `setUpProgram[abi:cxx11](unsigned long, unsigned long, int, int, int)':
+gol_serial.cpp:(.text+0x2bd0): multiple definition of `setUpProgram[abi:cxx11](unsigned long, unsigned long, int, int, int)'; /tmp/ccOYXEoD.o:gol_serial.cpp:(.text+0x2bd0): first defined here
+/usr/bin/ld: /tmp/ccWEWN3g.o: in function `main':
+gol_serial.cpp:(.text.startup+0x0): multiple definition of `main'; /tmp/ccOYXEoD.o:gol_serial.cpp:(.text.startup+0x0): first defined here
+collect2: error: ld returned 1 exit status
