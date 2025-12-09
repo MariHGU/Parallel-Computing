@@ -173,8 +173,7 @@ int main(int argc, char *argv[])
     }
 
     int processes, processID;
-    size_t firstRow = 0, lastRow = rows - 1, firstCol = 0, lastCol = cols - 1;
-
+    
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &processes);
     MPI_Comm_rank(MPI_COMM_WORLD, &processID);
@@ -185,19 +184,21 @@ int main(int argc, char *argv[])
     }
     
     broadcastProgram(programName, processID);
-
+    
     //Build board
     int row_width = rows/processes; // assuming divisability
     // ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1); global board
-    ublas::matrix<bool> board(row_width+2, cols); // local board
     
-    //initializeBoard(board);
-
+    ublas::matrix<bool> board(row_width+2, cols); // local board
+    size_t localFirstRow = processID * row_width;
+    size_t localLastRow = localFirstRow + row_width - 1, firstCol = 0, lastCol = cols - 1;
+    //size_t firstRow = 0, lastRow = rows - 1, firstCol = 0, lastCol = cols - 1;
+    
     // Initialize local boards
     initializeBoard(board, processID);
     //Do iteration    initializeBoard(board);
 
-    writeBoardToFile(board, firstRow, lastRow, firstCol, lastCol, programName, 0, processID);
+    writeBoardToFile(board, localFirstRow, localLastRow, firstCol, lastCol, programName, 0, processID);
     for (int i = 1; i <= iterations; ++i)
     {
         exchangeGhostRows(board, row_width, cols, processID, processes);
