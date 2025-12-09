@@ -88,7 +88,7 @@ void writeBoardToFile(ublas::matrix<bool> &board, size_t firstRow, size_t lastRo
     //Write data
     std::ostream_iterator<bool> output_iteratable(outputFile, "\t");
     // maybe skip ghost lines?
-    for (auto row = board.begin1(); row != board.end1(); ++row)
+    for (auto row = board.begin1()+1; row != board.end1()-1; ++row)
     {
         copy(row.begin(), row.end(), output_iteratable);
         outputFile << std::endl;
