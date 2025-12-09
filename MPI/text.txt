@@ -1,0 +1,23 @@
+mpic++ -o gol gol_serial.cpp -O3 -DNDEBUG -DBOOST_UBLAS_NDEBUG -std=c++1z gol_serial.cpp
+gol_serial.cpp: In function ‘int main(int, char**)’:
+gol_serial.cpp:204:27: error: cannot bind non-const lvalue reference of type ‘boost::numeric::ublas::matrix<unsigned char>&’ to an rvalue of type ‘boost::numeric::ublas::matrix<unsigned char>’
+  204 |         exchangeGhostRows(board, row_width, cols, processID, processes);
+      |                           ^~~~~
+In file included from gol_serial.cpp:12:
+/usr/include/boost/numeric/ublas/matrix.hpp:169:9: note:   after user-defined conversion: ‘boost::numeric::ublas::matrix<T, L, A>::matrix(const boost::numeric::ublas::matrix_expression<E1>&) [with AE = boost::numeric::ublas::matrix<bool>; T = unsigned char; L = boost::numeric::ublas::basic_row_major<>; A = boost::numeric::ublas::unbounded_array<unsigned char, std::allocator<unsigned char> >]’
+  169 |         matrix (const matrix_expression<AE> &ae):
+      |         ^~~~~~
+gol_serial.cpp:134:54: note:   initializing argument 1 of ‘void exchangeGhostRows(boost::numeric::ublas::matrix<unsigned char>&, int, int, int, int)’
+  134 | void exchangeGhostRows(ublas::matrix<unsigned char> &board, int rows, int cols, int processID, int processes){
+      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+gol_serial.cpp: In function ‘int main(int, char**)’:
+gol_serial.cpp:204:27: error: cannot bind non-const lvalue reference of type ‘boost::numeric::ublas::matrix<unsigned char>&’ to an rvalue of type ‘boost::numeric::ublas::matrix<unsigned char>’
+  204 |         exchangeGhostRows(board, row_width, cols, processID, processes);
+      |                           ^~~~~
+In file included from gol_serial.cpp:12:
+/usr/include/boost/numeric/ublas/matrix.hpp:169:9: note:   after user-defined conversion: ‘boost::numeric::ublas::matrix<T, L, A>::matrix(const boost::numeric::ublas::matrix_expression<E1>&) [with AE = boost::numeric::ublas::matrix<bool>; T = unsigned char; L = boost::numeric::ublas::basic_row_major<>; A = boost::numeric::ublas::unbounded_array<unsigned char, std::allocator<unsigned char> >]’
+  169 |         matrix (const matrix_expression<AE> &ae):
+      |         ^~~~~~
+gol_serial.cpp:134:54: note:   initializing argument 1 of ‘void exchangeGhostRows(boost::numeric::ublas::matrix<unsigned char>&, int, int, int, int)’
+  134 | void exchangeGhostRows(ublas::matrix<unsigned char> &board, int rows, int cols, int processID, int processes){
+      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~

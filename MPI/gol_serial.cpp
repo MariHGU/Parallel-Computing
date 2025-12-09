@@ -87,7 +87,8 @@ void writeBoardToFile(ublas::matrix<bool> &board, size_t firstRow, size_t lastRo
     outputFile << std::to_string(firstCol) << " " << std::to_string(lastCol) << std::endl;
     //Write data
     std::ostream_iterator<bool> output_iteratable(outputFile, "\t");
-    for (auto row = board.begin1()+1; row != board.end1()-1; ++row)
+    // maybe skip ghost lines?
+    for (auto row = board.begin1(); row != board.end1(); ++row)
     {
         copy(row.begin(), row.end(), output_iteratable);
         outputFile << std::endl;
@@ -130,21 +131,21 @@ void broadcastProgram(std::string &programName, int processID){
     programName = std::string(buffer);
 }
 
-void exchangeGhostRows(ublas::matrix<bool> &board, int rows, int cols, int processID, int processes){
+void exchangeGhostRows(ublas::matrix<unsigned char> &board, int rows, int cols, int processID, int processes){
     int up = (processID -1 + processes) % processes;
     int down = (processID + 1) % processes;
 
     // ublas is row-major -> row elements of row i are contiguous
 
     MPI_Sendrecv(
-        &board(1,0), cols, MPI_CXX_BOOL, down, 0, // send first real row
-        &board(rows+1, 0), cols, MPI_CXX_BOOL, down, 0, // recieve bottom ghost row
+        &board(1,0), cols, MPI_UNSIGNED_CHAR, down, 0, // send first real row
+        &board(rows+1, 0), cols, MPI_UNSIGNED_CHAR, down, 0, // recieve bottom ghost row
         MPI_COMM_WORLD, MPI_STATUS_IGNORE
     );
 
     MPI_Sendrecv(
-        &board(rows, 0), cols, MPI_CXX_BOOL, up, 1, // send bottom real row
-        &board(0, 0), cols, MPI_CXX_BOOL, up, 1,// recieve first ghost row
+        &board(rows, 0), cols, MPI_UNSIGNED_CHAR, up, 1, // send bottom real row
+        &board(0, 0), cols, MPI_UNSIGNED_CHAR, up, 1,// recieve first ghost row
         MPI_COMM_WORLD, MPI_STATUS_IGNORE
     ); 
 }
@@ -186,14 +187,16 @@ int main(int argc, char *argv[])
     
     //Build board
     int row_width = rows/processes; // assuming divisability
+    // ublas::matrix<bool> board(lastRow - firstRow + 1, lastCol - firstCol + 1); global board
     
     ublas::matrix<bool> board(row_width+2, cols); // local board
     size_t localFirstRow = processID * row_width;
     size_t localLastRow = localFirstRow + row_width - 1, firstCol = 0, lastCol = cols - 1;
+    //size_t firstRow = 0, lastRow = rows - 1, firstCol = 0, lastCol = cols - 1;
     
     // Initialize local boards
     initializeBoard(board, processID);
-    //Do iteration
+    //Do iteration    initializeBoard(board);
 
     writeBoardToFile(board, localFirstRow, localLastRow, firstCol, lastCol, programName, 0, processID);
     for (int i = 1; i <= iterations; ++i)
