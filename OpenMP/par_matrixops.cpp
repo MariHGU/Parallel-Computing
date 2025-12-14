@@ -10,9 +10,8 @@ namespace ublas = boost::numeric::ublas;
 
 void fullTimesDiagonal(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
 {
-    #pragma omp parallel
-    {
-        size_t N = result.size1();
+    size_t N = result.size1();
+    #pragma omp parallel for
         for (size_t i = 0; i < N; ++i)
         {
             for (size_t j = 0; j < N; ++j)
@@ -20,15 +19,10 @@ void fullTimesDiagonal(ublas::matrix<double> &left, ublas::matrix<double> &right
                 result(i, j) = left(i, j) * right(j, j);
             }                      
         }
-    }
 }
 
 void fullTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
 {
-    #pragma omp parallel 
-    {
-
-    }
     size_t N = result.size1();
     for (size_t i = 0; i < N; ++i)
     {
