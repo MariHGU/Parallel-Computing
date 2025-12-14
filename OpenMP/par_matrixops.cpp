@@ -12,11 +12,14 @@ void fullTimesDiagonal(ublas::matrix<double> &left, ublas::matrix<double> &right
 {
     #pragma omp parallel
     {
-        int N = result.size1();
-        int thread_id = omp_get_thread_num();
-        for (int i=0; i<N; ++i){
-            result(i, thread_id) = left(i, thread_id) * right(thread_id, thread_id);
-        } 
+        size_t N = result.size1();
+        for (size_t i = 0; i < N; ++i)
+        {
+            for (size_t j = 0; j < N; ++j)
+            {
+                result(i, j) = left(i, j) * right(j, j);
+            }                      
+        }
     }
 }
 
