@@ -12,8 +12,8 @@ void fullTimesDiagonal(ublas::matrix<double> &left, ublas::matrix<double> &right
 {
     size_t N = result.size1();
     #pragma omp parallel for
-        for (size_t i = 0; i < N; ++i)
-        {
+    for (size_t i = 0; i < N; ++i)
+    {
             for (size_t j = 0; j < N; ++j)
             {
                 result(i, j) = left(i, j) * right(j, j);
@@ -76,6 +76,7 @@ void fullTimesFullBlocked(ublas::matrix<double> &left, ublas::matrix<double> &ri
 void triangularTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
 {
     size_t N = result.size1();
+    #pragma omp prallelize for collapse(2) schedule(dynamic, 16)
     for (size_t i = 0; i < N; ++i)
     {
         for (size_t j = 0; j < N; ++j)
